@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,4 +22,11 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
       WHERE p.id = :id
       """)
   Optional<ProductEntity> findByIdForUpdate(@Param("id") UUID id);
+
+  @Query("""
+      select p
+      from ProductEntity p
+      where p.stockQuantity < p.minStock
+      """)
+  List<ProductEntity> findLowStockProducts();
 }

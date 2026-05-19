@@ -65,4 +65,12 @@ public class ProductService {
 
     return productMapper.toResponse(product);
   }
+
+  @Transactional(readOnly = true)
+  public List<ProductResponse> getLowStockProducts() {
+    return productRepository.findLowStockProducts()
+        .stream()
+        .map(productMapper::toResponse)
+        .toList();
+  }
 }

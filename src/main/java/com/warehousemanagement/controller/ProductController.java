@@ -45,4 +45,9 @@ public class ProductController {
   ) {
     return ResponseEntity.ok(productService.update(id, request));
   }
+
+  @GetMapping("/low-stock")
+  public ResponseEntity<List<ProductResponse>> getLowStockProducts() {
+    return ResponseEntity.ok(productService.getLowStockProducts());
+  }
 }

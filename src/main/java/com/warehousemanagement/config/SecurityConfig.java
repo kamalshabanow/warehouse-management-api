@@ -5,6 +5,7 @@ import com.warehousemanagement.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -50,10 +51,19 @@ public class SecurityConfig {
             })
         )
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/v1/auth/**").permitAll()
-            .requestMatchers("/v1/categories/**").permitAll()
-            .requestMatchers("/v1/products/**").permitAll()
-            .requestMatchers("/v1/sales/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/v1/auth/**").permitAll()
+
+            .requestMatchers(HttpMethod.POST, "/v1/categories").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/v1/categories").hasAnyRole("ADMIN", "WAREHOUSE")
+
+            .requestMatchers(HttpMethod.POST, "/v1/products").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PUT, "/v1/products/*").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/v1/products", "/v1/products/low-stock")
+            .hasAnyRole("ADMIN", "WAREHOUSE")
+
+            .requestMatchers(HttpMethod.POST, "/v1/stock/in").hasRole("WAREHOUSE")
+            .requestMatchers(HttpMethod.POST, "/v1/sales").hasRole("WAREHOUSE")
+
             .anyRequest().authenticated()
         )
         .authenticationProvider(authenticationProvider)
