@@ -53,6 +53,7 @@ public class SecurityConfig {
             .requestMatchers("/v1/auth/**").permitAll()
             .requestMatchers("/v1/categories/**").permitAll()
             .requestMatchers("/v1/products/**").permitAll()
+            .requestMatchers("/v1/sales/**").permitAll()
             .anyRequest().authenticated()
         )
         .authenticationProvider(authenticationProvider)

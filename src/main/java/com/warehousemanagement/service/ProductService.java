@@ -41,7 +41,7 @@ public class ProductService {
     return productMapper.toResponse(productRepository.save(product));
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   public List<ProductResponse> getAll() {
     return productRepository.findAll()
         .stream()
