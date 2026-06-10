@@ -2,6 +2,8 @@ package com.warehousemanagement.config;
 
 import com.warehousemanagement.repository.UserRepository;
 import com.warehousemanagement.security.JwtAuthenticationFilter;
+import com.warehousemanagement.security.OAuth2SuccessHandler;
+import com.warehousemanagement.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +35,9 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(
       HttpSecurity http,
       AuthenticationProvider authenticationProvider,
-      JwtAuthenticationFilter jwtAuthenticationFilter
+      JwtAuthenticationFilter jwtAuthenticationFilter,
+      CustomOAuth2UserService customOAuth2UserService,
+      OAuth2SuccessHandler oAuth2SuccessHandler
   ) throws Exception {
     return http
         .csrf(AbstractHttpConfigurer::disable)
@@ -55,7 +59,9 @@ public class SecurityConfig {
                 "/swagger-ui.html",
                 "/swagger-ui/**",
                 "/v3/api-docs",
-                "/v3/api-docs/**"
+                "/v3/api-docs/**",
+                "/oauth2/**",
+                "/login/oauth2/**"
             ).permitAll()
             .requestMatchers(HttpMethod.POST, "/v1/auth/**").permitAll()
 
@@ -73,6 +79,12 @@ public class SecurityConfig {
             .anyRequest().authenticated()
         )
         .authenticationProvider(authenticationProvider)
+        .oauth2Login(oauth -> oauth
+            .userInfoEndpoint(userInfo ->
+                userInfo.userService(customOAuth2UserService)
+            )
+            .successHandler(oAuth2SuccessHandler)
+        )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }

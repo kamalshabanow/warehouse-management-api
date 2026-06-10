@@ -1,6 +1,16 @@
 spring:
   application:
     name: warehouse-management-api
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
 
   datasource:
     url: jdbc:postgresql://localhost:5432/warehouse_db

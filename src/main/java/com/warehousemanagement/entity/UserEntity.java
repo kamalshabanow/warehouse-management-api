@@ -41,8 +41,17 @@ public class UserEntity implements UserDetails {
   @Column(name = "username", nullable = false, unique = true)
   private String username;
 
-  @Column(name = "password", nullable = false)
+  @Column(name = "email", unique = true)
+  private String email;
+
+  @Column(name = "password")
   private String password;
+
+  @Column(name = "google_id", unique = true)
+  private String googleId;
+
+  @Column(name = "full_name")
+  private String fullName;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "role", nullable = false)
