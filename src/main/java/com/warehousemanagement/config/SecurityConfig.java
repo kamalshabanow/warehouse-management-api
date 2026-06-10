@@ -41,7 +41,7 @@ public class SecurityConfig {
   ) throws Exception {
     return http
         .csrf(AbstractHttpConfigurer::disable)
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
         .exceptionHandling(exception -> exception
             .authenticationEntryPoint((request, response, authException) -> {
               response.setStatus(401);
