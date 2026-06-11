@@ -50,6 +50,9 @@ public class UserEntity implements UserDetails {
   @Column(name = "google_id", unique = true)
   private String googleId;
 
+  @Column(name = "github_id", unique = true)
+  private String githubId;
+
   @Column(name = "full_name")
   private String fullName;
 

@@ -30,6 +30,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     String email = oAuth2User.getAttribute("email");
 
+    if(email == null && oAuth2User.getAttribute("login") != null) {
+      email = oAuth2User.getAttribute("login") + "@github.local";
+    }
+
     UserEntity user = userRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("User not found"));
 

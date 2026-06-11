@@ -22,23 +22,60 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     OAuth2User oauth2User = super.loadUser(userRequest);
 
+    String registrationId = userRequest.getClientRegistration().getRegistrationId();
+
     String email = oauth2User.getAttribute("email");
-    String googleId = oauth2User.getAttribute("sub");
     String name = oauth2User.getAttribute("name");
 
-    UserEntity user = userRepository.findByEmail(email)
-        .orElseGet(() -> {
-          UserEntity newUser = UserEntity.builder()
-              .username(email)
-              .email(email)
-              .googleId(googleId)
-              .fullName(name)
-              .role(UserRole.WAREHOUSE)
-              .build();
+    if ("github".equals(registrationId)) {
+      Object githubIdObj = oauth2User.getAttribute("id");
+      String githubId = githubIdObj != null ? githubIdObj.toString() : null;
 
-          return userRepository.save(newUser);
+      if (name == null) {
+        name = oauth2User.getAttribute("login");
+      }
 
-        });
+      if (email == null) {
+        email = oauth2User.getAttribute("login") + "@github.local";
+      }
+
+      String finalEmail = email;
+      String finalName = name;
+
+      userRepository.findByEmail(finalEmail)
+          .orElseGet(() -> {
+            UserEntity newUser = UserEntity.builder()
+                .username(finalEmail)
+                .email(finalEmail)
+                .githubId(githubId)
+                .fullName(finalName)
+                .role(UserRole.WAREHOUSE)
+                .build();
+
+            return userRepository.save(newUser);
+
+          });
+    } else if ("google".equals(registrationId)) {
+
+      String googleId = oauth2User.getAttribute("sub");
+
+      String finalEmail = email;
+      String finalName = name;
+      userRepository.findByEmail(email)
+          .orElseGet(() -> {
+            UserEntity newUser = UserEntity.builder()
+                .username(finalEmail)
+                .email(finalEmail)
+                .googleId(googleId)
+                .fullName(finalName)
+                .role(UserRole.WAREHOUSE)
+                .build();
+
+            return userRepository.save(newUser);
+
+          });
+
+    }
 
     return oauth2User;
   }

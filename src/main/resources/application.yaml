@@ -11,6 +11,12 @@ spring:
             scope:
               - email
               - profile
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope:
+              - user:email
+              - read:user
 
   datasource:
     url: jdbc:postgresql://localhost:5432/warehouse_db

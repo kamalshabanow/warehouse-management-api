@@ -61,7 +61,8 @@ public class SecurityConfig {
                 "/v3/api-docs",
                 "/v3/api-docs/**",
                 "/oauth2/**",
-                "/login/oauth2/**"
+                "/login/oauth2/**",
+                "/error"
             ).permitAll()
             .requestMatchers(HttpMethod.POST, "/v1/auth/**").permitAll()
 
@@ -84,6 +85,12 @@ public class SecurityConfig {
                 userInfo.userService(customOAuth2UserService)
             )
             .successHandler(oAuth2SuccessHandler)
+            .failureHandler((request, response, exception) -> {
+              response.setStatus(401);
+              response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+              response.getWriter().write("{\"status\":401,\"message\":\""
+                  + exception.getMessage().replace("\"", "'") + "\"}");
+            })
         )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
